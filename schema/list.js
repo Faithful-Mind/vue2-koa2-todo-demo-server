@@ -4,6 +4,7 @@ module.exports = function (sequelize, DataTypes) {
       type: DataTypes.INTEGER(11),
       allowNull: false,
       primaryKey: true,
+      autoIncrement: true,
     },
     user_id: {
       type: DataTypes.INTEGER(11),
@@ -14,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
       allowNull: false,
     },
     status: {
-      type: DataTypes.INTEGER(1),
+      type: DataTypes.BOOLEAN,
       allowNull: false,
       defaultValue: '0',
     },
