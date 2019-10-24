@@ -3,6 +3,8 @@ const Router = require('koa-router');
 const json = require('koa-json');
 const logger = require('koa-logger'); // 引入各种依赖
 
+const auth = require('./routes/auth.js');
+
 const app = new Koa();
 const koa = new Router();
 
@@ -21,6 +23,10 @@ app.use(async (ctx, next) => {
 app.on('error', (err) => {
   console.log('server error', err);
 });
+
+koa.use('/auth', auth.routes()); // 挂载到koa-router上，同时会让所有的auth的请求路径前面加上'/auth'的请求路径。
+
+app.use(koa.routes()); // 将路由规则挂载到Koa上。
 
 app.listen(8889, () => {
   console.log('Koa is listening in 8889');
