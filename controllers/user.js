@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
 
 const user = require('../models/user.js');
 
@@ -13,7 +14,7 @@ async function postUserAuth(ctx) {
   const userInfo = await user.getUserByName(data.name);
 
   if (userInfo != null) { // 如果查无此用户会返回null
-    if (userInfo.password !== data.password) {
+    if (!await bcrypt.compare(data.password, userInfo.password)) { // 验证密码是否正确
       ctx.body = {
         success: false, // success标志位是方便前端判断返回是正确与否
         info: '密码错误！',
