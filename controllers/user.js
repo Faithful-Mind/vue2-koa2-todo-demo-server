@@ -25,7 +25,7 @@ async function postUserAuth(ctx) {
         id: userInfo.id,
       };
       const secret = 'vue-koa-demo'; // 指定密钥，这是之后用来判断token合法性的标志
-      const token = jwt.sign(userToken, secret); // 签发token
+      const token = jwt.sign(userToken, secret, { expiresIn: '7 days' }); // 签发token
       ctx.body = {
         success: true,
         token, // 返回token
