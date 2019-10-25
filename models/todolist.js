@@ -25,7 +25,33 @@ async function createTodolist(data) { // 给某个用户创建一条todolist
   return true;
 }
 
+async function removeTodolist(id, user_id) {
+  await Todolist.destroy({
+    where: {
+      id,
+      user_id,
+    },
+  });
+  return true;
+}
+
+async function updateTodolist(id, user_id, data) {
+  const { content, status } = data;
+  await Todolist.update(
+    { content, status },
+    {
+      where: {
+        id,
+        user_id,
+      },
+    },
+  );
+  return true;
+}
+
 module.exports = {
   getTodolistById,
   createTodolist,
+  removeTodolist,
+  updateTodolist,
 };
