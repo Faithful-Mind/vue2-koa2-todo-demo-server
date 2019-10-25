@@ -39,7 +39,32 @@ async function postUserAuth(ctx) {
   }
 }
 
+async function registerUser(ctx) {
+  const { name, password } = ctx.request.body;
+  const newuser = await user.createUser({ name, password });
+  if (newuser) {
+    ctx.status = 201;
+    ctx.body = {
+      success: true,
+      name,
+      id: newuser.id,
+      token: jwt.sign(
+        { name, id: newuser.id },
+        'vue-koa-demo',
+        { expiresIn: '7 days' },
+      ),
+    };
+  } else {
+    ctx.status = 409;
+    ctx.body = {
+      success: false,
+      info: '用户名不可用',
+    };
+  }
+}
+
 module.exports = {
   getUserInfo, // 把获取用户信息的方法暴露出去
   postUserAuth,
+  registerUser,
 };

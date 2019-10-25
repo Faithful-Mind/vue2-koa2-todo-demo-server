@@ -1,3 +1,5 @@
+const bcrypt = require('bcrypt');
+
 const db = require('../config/db.js');
 
 const userModel = '../schema/user.js'; // 引入user的表结构
@@ -25,7 +27,22 @@ async function getUserByName(name) {
   return userInfo;
 }
 
+async function createUser(userInfo) {
+  const { name, password } = userInfo;
+  const isDuplicated = await getUserByName(name);
+  if (!isDuplicated) {
+    const pswdBcrypted = await bcrypt.hash(password, 10);
+    const newUser = await User.create({
+      user_name: name,
+      password: pswdBcrypted,
+    });
+    return newUser;
+  }
+  return undefined;
+}
+
 module.exports = {
   getUserById, // 导出getUserById的方法，将会在controller里调用
   getUserByName,
+  createUser,
 };

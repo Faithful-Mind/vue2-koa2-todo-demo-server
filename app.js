@@ -4,6 +4,7 @@ const json = require('koa-json');
 const logger = require('koa-logger');
 const jwt = require('koa-jwt');
 
+const user = require('./routes/user.js');
 const auth = require('./routes/auth.js');
 const api = require('./routes/api.js');
 
@@ -43,6 +44,7 @@ app.on('error', (err) => {
   console.log('server error', err);
 });
 
+koa.use('/user', user.routes());
 koa.use('/auth', auth.routes()); // 挂载到koa-router上，同时会让所有的auth的请求路径前面加上'/auth'的请求路径。
 koa.use('/api', jwt({ secret: 'vue-koa-demo' }), api.routes()); // 所有走/api/打头的请求都需要经过jwt中间件的验证。secret密钥必须跟我们当初签发的secret一致
 
