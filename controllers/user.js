@@ -63,8 +63,34 @@ async function registerUser(ctx) {
   }
 }
 
+async function patchUserPassword(ctx) {
+  const { id } = ctx.params;
+  const { password, newPassword } = ctx.request.body;
+  const theUser = await user.updateUserPasswordById({ id, password, newPassword });
+  if (theUser) {
+    ctx.status = 200;
+    ctx.body = {
+      success: true,
+      name: theUser.user_name,
+      id,
+      token: jwt.sign(
+        { name: theUser.user_name, id },
+        'vue-koa-demo',
+        { expiresIn: '7 days' },
+      ),
+    };
+  } else {
+    ctx.status = 401;
+    ctx.body = {
+      success: false,
+      info: '密码错误',
+    };
+  }
+}
+
 module.exports = {
   getUserInfo, // 把获取用户信息的方法暴露出去
   postUserAuth,
   registerUser,
+  patchUserPassword,
 };

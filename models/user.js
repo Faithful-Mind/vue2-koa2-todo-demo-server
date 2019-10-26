@@ -41,8 +41,22 @@ async function createUser(userInfo) {
   return undefined;
 }
 
+async function updateUserPasswordById({ id, password, newPassword }) {
+  const user = await getUserById(id);
+
+  if (await bcrypt.compare(password, user.password)) {
+    const rows = await user.update(
+      { password: await bcrypt.hash(newPassword, 10) },
+      { where: { id } },
+    );
+    return rows;
+  }
+  return undefined;
+}
+
 module.exports = {
   getUserById, // 导出getUserById的方法，将会在controller里调用
   getUserByName,
   createUser,
+  updateUserPasswordById,
 };
