@@ -17,12 +17,11 @@ async function getTodolistById(id) { // 获取某个用户的全部todolist
 }
 
 async function createTodolist(data) { // 给某个用户创建一条todolist
-  await Todolist.create({
+  return Todolist.create({
     user_id: data.id, // 用户的id，用来确定给哪个用户创建
     content: data.content,
     status: data.status,
   });
-  return true;
 }
 
 async function removeTodolist(id, user_id) {
@@ -35,9 +34,15 @@ async function removeTodolist(id, user_id) {
   return true;
 }
 
+/**
+ *
+ * @param {number} id Todo ID
+ * @param {number} user_id User ID
+ * @param {{content: string; status: boolean}} data Todo data
+ */
 async function updateTodolist(id, user_id, data) {
   const { content, status } = data;
-  await Todolist.update(
+  const [affectedRows] = await Todolist.update(
     { content, status },
     {
       where: {
@@ -46,7 +51,7 @@ async function updateTodolist(id, user_id, data) {
       },
     },
   );
-  return true;
+  return !!affectedRows;
 }
 
 module.exports = {
