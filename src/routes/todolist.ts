@@ -1,47 +1,42 @@
-import Router from 'koa-router';
-import { getRepository } from 'typeorm';
-import { TodoList } from '../entities/TodoList';
+import { IMiddleware } from 'koa-router';
+import { TodoRepo } from '../entities/TodoList';
 
-const router = new Router();
-
-router.get('/todolist', async (ctx) => {
+export const getTodolist: IMiddleware = async (ctx) => {
   const { userId } = ctx.params;
-  const result = await getRepository(TodoList).find(
+  const result = await TodoRepo().find(
     { select: ['id', 'content', 'status'], where: { userId } },
   );
   ctx.body = result;
-});
+};
 
-router.post('/todolist', async (ctx) => {
+export const postTodolist: IMiddleware = async (ctx) => {
   const { userId } = ctx.params;
   const { content, status } = ctx.request.body;
-  if (await getRepository(TodoList).save({ userId, content, status })) {
+  if (await TodoRepo().save({ userId, content, status })) {
     ctx.status = 201;
     ctx.body = {
       success: true,
     };
   }
-});
+};
 
-router.delete('/todolist/:id', async (ctx) => {
+export const deleteTodo: IMiddleware = async (ctx) => {
   const { id, userId } = ctx.params;
-  if ((await getRepository(TodoList).delete({ id, userId })).affected) {
+  if ((await TodoRepo().delete({ id, userId })).affected) {
     ctx.body = {
       success: true,
     };
   }
-});
+};
 
-router.put('/todolist/:id', async (ctx) => {
+export const updateTodo: IMiddleware = async (ctx) => {
   const { id, userId } = ctx.params;
   const { content, status } = ctx.request.body;
-  const todo = await getRepository(TodoList).findOne({ id, userId });
+  const todo = await TodoRepo().findOne({ id, userId });
   if (todo) {
-    await getRepository(TodoList).save({ ...todo, content, status });
+    await TodoRepo().save({ ...todo, content, status });
     ctx.body = {
       success: true,
     };
   }
-});
-
-export default router;
+};

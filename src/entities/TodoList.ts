@@ -1,5 +1,5 @@
 import {
-  BaseEntity, Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId,
+  Column, Entity, PrimaryGeneratedColumn, getRepository,
 } from 'typeorm';
 
 
@@ -30,4 +30,8 @@ export class TodoList {
     name: 'status',
   })
   status!: boolean;
+}
+
+export function TodoRepo() {
+  return getRepository(TodoList);
 }

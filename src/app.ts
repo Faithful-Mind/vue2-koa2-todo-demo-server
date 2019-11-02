@@ -2,7 +2,6 @@ import 'reflect-metadata';
 import { createConnection } from 'typeorm';
 import Koa from 'koa';
 import bodyParser from 'koa-bodyparser';
-import json from 'koa-json';
 import logger from 'koa-logger';
 
 import router from './routes';
@@ -11,7 +10,6 @@ createConnection().then(async (connection) => {
   const app = new Koa();
 
   app.use(bodyParser());
-  app.use(json());
   app.use(logger());
 
   app.use(async (ctx, next) => {
