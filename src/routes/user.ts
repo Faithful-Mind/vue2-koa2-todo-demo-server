@@ -1,10 +1,8 @@
-import Router from 'koa-router';
+import { IMiddleware } from 'koa-router';
 import jwt from 'jsonwebtoken';
 import { createNewUser, updateUserPasswordById } from '../services/user';
 
-const router = new Router();
-
-router.post('/register', async (ctx) => {
+export const postRegister: IMiddleware = async (ctx) => {
   const { name, password } = ctx.request.body;
   const newuser = await createNewUser(name, password);
   if (newuser) {
@@ -23,9 +21,9 @@ router.post('/register', async (ctx) => {
       info: '用户名不可用',
     };
   }
-});
+};
 
-router.patch('/:id', async (ctx) => {
+export const patchPassword: IMiddleware = async (ctx) => {
   const { id } = ctx.params;
   const { password, newPassword } = ctx.request.body;
   const theUser = await updateUserPasswordById(id, password, newPassword);
@@ -42,6 +40,4 @@ router.patch('/:id', async (ctx) => {
       info: '密码错误',
     };
   }
-});
-
-export default router;
+};

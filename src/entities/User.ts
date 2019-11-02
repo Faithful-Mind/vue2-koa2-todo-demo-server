@@ -1,5 +1,5 @@
 import {
-  BaseEntity, Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, OneToOne, PrimaryColumn, PrimaryGeneratedColumn, RelationId,
+  Column, Entity, PrimaryGeneratedColumn, getRepository,
 } from 'typeorm';
 
 
@@ -24,4 +24,8 @@ export class User {
     name: 'password',
   })
   password!: string;
+}
+
+export function UserRepo() {
+  return getRepository(User);
 }

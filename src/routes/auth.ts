@@ -1,18 +1,10 @@
-import Router from 'koa-router';
+import { IMiddleware } from 'koa-router';
 import { getRepository } from 'typeorm';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { User } from '../entities/User';
 
-const router = new Router();
-
-router.get('/user/:id', async (ctx) => {
-  const { id } = ctx.params;
-  const result = await getRepository(User).findOne(id);
-  ctx.body = result;
-});
-
-router.post('/user', async (ctx) => {
+export const authLogin: IMiddleware = async (ctx) => {
   const { name: userName, password } = ctx.request.body;
   const userInfo = await getRepository(User).findOne({ userName });
   // 用户存在则验证密码是否正确
@@ -32,6 +24,4 @@ router.post('/user', async (ctx) => {
       info: '用户名或密码错误！',
     };
   }
-});
-
-export default router;
+};
