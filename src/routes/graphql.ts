@@ -1,5 +1,5 @@
-const { ApolloServer, gql } = require('apollo-server-koa');
-const todolist = require('../models/todolist.js');
+import { ApolloServer, gql, IResolvers } from 'apollo-server-koa';
+import { TodoRepo } from '../entities/TodoList';
 
 // Construct a schema, using GraphQL schema language
 const typeDefs = gql`
@@ -19,24 +19,25 @@ const typeDefs = gql`
 `;
 
 // Provide resolver functions for your schema fields
-const resolvers = {
+const resolvers: IResolvers = {
   Query: {
-    todos: (root, { userId }) => todolist.getTodolistById(userId),
+    todos: (root, { userId }) => TodoRepo().find({ userId }),
   },
   Mutation: {
     createTodo: (root, { userId, content, status }) => (
-      todolist.createTodolist({ id: userId, content, status })
-        .then((todo) => todo.toJSON())
+      TodoRepo().save({ userId, content, status })
     ),
-    updateTodo: (root, { id, userId, content, status }) => (
-      todolist.updateTodolist(id, userId, { content, status })
-    ),
+    updateTodo: async (root, { id, userId, content, status }) => {
+      const todo = await TodoRepo().findOne({ id, userId });
+      return todo && TodoRepo().save({ ...todo, content, status })
+        .then(Boolean);
+    },
     removeTodo: (root, { id, userId }) => (
-      todolist.removeTodolist(id, userId)
+      TodoRepo().delete({ id, userId }).then((res) => Boolean(res.affected))
     ),
   },
 };
 
 const server = new ApolloServer({ typeDefs, resolvers });
 
-module.exports = server.getMiddleware();
+export default server.getMiddleware();
